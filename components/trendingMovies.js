@@ -2,12 +2,20 @@ import React from "react";
 import { Text, View, Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import MovieCard from "../components/MovieCard";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
+
 export default function TrendingMovies({ data }) {
+  const navigation = useNavigation();
+
+  const handleClick = (item) => {
+    navigation.navigate("Movie", item);
+  };
+
   return (
     <View className="mb-8">
-      <Text className="mx-4 mb-5 text-xl text-white">Trending</Text>
+      <Text className="mx-4 mt-4 mb-2 text-xl text-white">Trending</Text>
       <Carousel
         loop
         data={data}
@@ -21,7 +29,9 @@ export default function TrendingMovies({ data }) {
         }}
         scrollAnimationDuration={1000}
         style={{ alignSelf: "center" }}
-        renderItem={({ item }) => <MovieCard item={item} />}
+        renderItem={({ item }) => (
+          <MovieCard item={item} handleClick={handleClick} />
+        )}
       />
     </View>
   );

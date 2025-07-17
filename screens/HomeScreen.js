@@ -15,16 +15,19 @@ import {
 } from "react-native-heroicons/outline";
 import TrendingMovies from "../components/trendingMovies";
 import { styles } from "../theme/constants.js";
+import MovieList from "../components/MovieList.js";
 
-const ios = Platform.OS == "ios";
+const ios = Platform.OS === "ios";
 
 export default function HomeScreen({ navigation }) {
-  const [trending, setTrending] = useState([1, 2, 3]);
+  const [trending, setTrending] = useState([1, 2, 3, 4, 5, 6]);
+  const [upcoming, setUpcoming] = useState([1, 2, 3, 4, 5, 6]);
+  const [topRated, setTopRated] = useState([1, 2, 3]);
 
   return (
     <View className="flex-1 bg-neutral-800">
       {/* Search bar and logo */}
-      <SafeAreaView className={ios ? "-mb-2" : "mb-3 mt-5"}>
+      <SafeAreaView className={ios ? "-mb-2" : "mt-12"}>
         <StatusBar style="light" />
         <View className="flex-row items-center justify-between mx-4">
           <Bars3CenterLeftIcon size={30} color="white" />
@@ -43,6 +46,12 @@ export default function HomeScreen({ navigation }) {
       >
         {/* Trending Movies Carousel */}
         <TrendingMovies data={trending} />
+
+        {/* Upcoming Movies Carousel */}
+        <MovieList title="Upcoming" data={upcoming} />
+
+        {/* TopRated Movies Carousel */}
+        <MovieList title="TopRated" data={topRated} />
       </ScrollView>
     </View>
   );
