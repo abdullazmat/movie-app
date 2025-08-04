@@ -16,13 +16,15 @@ import {
 import TrendingMovies from "../components/trendingMovies";
 import { styles } from "../theme/constants.js";
 import MovieList from "../components/MovieList.js";
+import { useNavigation } from "@react-navigation/native";
 
 const ios = Platform.OS === "ios";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ }) {
   const [trending, setTrending] = useState([1, 2, 3, 4, 5, 6]);
   const [upcoming, setUpcoming] = useState([1, 2, 3, 4, 5, 6]);
   const [topRated, setTopRated] = useState([1, 2, 3]);
+  const navigation = useNavigation();
 
   return (
     <View className="flex-1 bg-neutral-800">
@@ -34,7 +36,7 @@ export default function HomeScreen({ navigation }) {
           <Text className="text-3xl font-bold text-white">
             <Text style={styles.text}>M</Text>ovies
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Search")}>
             <MagnifyingGlassIcon size={30} color={"white"} />
           </TouchableOpacity>
         </View>
