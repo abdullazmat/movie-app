@@ -6,11 +6,11 @@ export default {
     slug: "movie",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/adaptive-icon.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
     splash: {
-      image: "./assets/splash-icon.png",
+      image: "./assets/adaptive-icon.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff"
     },
@@ -26,7 +26,7 @@ export default {
       package: "com.abdullahazmat.movie"
     },
     web: {
-      favicon: "./assets/favicon.png"
+      favicon: "./assets/adaptive-icon.png"
     },
     extra: {
       eas: {
