@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -18,15 +18,41 @@ import { styles } from "../theme/constants.js";
 import MovieList from "../components/MovieList.js";
 import { useNavigation } from "@react-navigation/native";
 import LoadingScreen from "./LoadingScreen.js";
+import { fetchingTopRatedMovies, fetchingTrendingMovies, fetchingUpcomingMovies } from "../api/moviedb.js";
 
 const ios = Platform.OS === "ios";
 
 export default function HomeScreen({ }) {
-  const [trending, setTrending] = useState([1, 2, 3, 4, 5, 6]);
-  const [upcoming, setUpcoming] = useState([1, 2, 3, 4, 5, 6]);
-  const [topRated, setTopRated] = useState([1, 2, 3]);
-  const [loading, setLoading] = useState(false);
+  const [trending, setTrending] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
+  const [topRated, setTopRated] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    getTrendingMovies();
+    getUpComingMovies();
+    getTopRatedMovies();
+  }, []);
+
+  const getTrendingMovies = async () => {
+    const data = await fetchingTrendingMovies();
+    if (data && data.results) setTrending(data.results);
+    setLoading(false);
+  }
+
+  const getUpComingMovies = async () => {
+    const data = await fetchingUpcomingMovies();
+    if (data && data.results) setUpcoming(data.results);
+    setLoading(false);
+  }
+
+
+  const getTopRatedMovies = async () => {
+    const data = await fetchingTopRatedMovies();
+    if (data && data.results) setTopRated(data.results);
+    setLoading(false);
+  }
 
   return (
     <View className="flex-1 bg-neutral-800">
@@ -52,10 +78,13 @@ export default function HomeScreen({ }) {
             contentContainerStyle={{ paddingBottom: 10 }}
           >
             {/* Trending Movies Carousel */}
-            <TrendingMovies data={trending} />
+            {
+              trending.length > 0 && <TrendingMovies data={trending} />
+
+            }
 
             {/* Upcoming Movies Carousel */}
-            <MovieList title="Upcoming" data={upcoming} />
+            {upcoming.length > 0 && <MovieList title="Upcoming" data={upcoming} />}
 
             {/* TopRated Movies Carousel */}
             <MovieList title="TopRated" data={topRated} />

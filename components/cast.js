@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { image185 } from "../api/moviedb";
 
 export default function Cast({ person, navigation }) {
-  let charname = "John Wick";
-  let personname = "Keanu Reevs";
+
   return (
     <View className="my-6">
       <Text className="mx-4 mb-5 text-lg text-white"> Top Cast </Text>
@@ -20,29 +20,34 @@ export default function Cast({ person, navigation }) {
         contentContainerStyle={{ paddingHorizontal: 15 }}
       >
         {person &&
-          person.map((item, index) => {
+          person?.map((item, index) => {
             return (
               <TouchableOpacity
                 key={index}
                 className="items-center mr-4"
-                onPress={() => navigation.navigate("Person", person)}
+                onPress={() => navigation.navigate("Person", item.id)}
               >
                 <View className="items-center w-20 h-20 overflow-hidden border rounded-full border-neutral-500">
                   <Image
                     className="w-20 h-20"
-                    source={require("../assets/kevvin.png")}
+                    source={
+                      item.profile_path
+                        ? { uri: image185(item.profile_path) }
+                        : require("../assets/fallovercast.jpg")
+                    }
+
                   />
                 </View>
 
                 <Text className="mt-1 text-xs text-white">
-                  {charname.length > 10
-                    ? charname.slice(0, 10) + " ..."
-                    : charname}
+                  {item?.character?.length > 12
+                    ? item?.character.slice(0, 12) + " ..."
+                    : item?.character}
                 </Text>
                 <Text className="mt-1 text-xs text-neutral-400">
-                  {personname.length > 12
-                    ? personname.slice(0, 10) + " ..."
-                    : personname}
+                  {item?.name > 12
+                    ? item?.name?.slice(0, 12) + " ..."
+                    : item?.name}
                 </Text>
               </TouchableOpacity>
             );

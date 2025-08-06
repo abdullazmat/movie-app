@@ -17,6 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Cast from "../components/cast";
 import MovieList from "../components/MovieList";
 import LoadingScreen from "./LoadingScreen";
+import { fetchingMoviesCast, fetchingMoviesDetails, fetchingSimilarMovies, image500 } from "../api/moviedb";
 
 const { width, height } = Dimensions.get("screen");
 const ios = Platform.OS === "ios";
@@ -27,13 +28,38 @@ export default function MovieScreen() {
   const { params } = useRoute();
   const item = params?.item || {};
   const [isFav, toggleFav] = useState(false);
-  const [cast, setCast] = useState([1, 2, 3, 4, 5]);
-  const [similarMovies, setSimilarMovies] = useState([1, 2, 3, 4, 5]);
-  const [loading, setLoading] = useState(false);
+  const [movieDetails, setMovieDetails] = useState([]);
+  const [cast, setCast] = useState([]);
+  const [similarMovies, setSimilarMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  let movieName = "Movie Name Reign of the Regnarok";
 
-  useEffect(() => { }, [item]);
+  useEffect(() => {
+    getMovieDetails(item.id);
+    getMovieCast(item.id);
+    getSimilarMovies(item.id);
+
+  }, [item]);
+
+  const getMovieDetails = async (id) => {
+    const data = await fetchingMoviesDetails(id);
+    setMovieDetails(data);
+    setLoading(false);
+
+  }
+
+  const getMovieCast = async (id) => {
+    const data = await fetchingMoviesCast(id);
+    setCast(data.cast);
+    setLoading(false);
+
+  }
+
+  const getSimilarMovies = async (id) => {
+    const data = await fetchingSimilarMovies(id);
+    setSimilarMovies(data.results);
+    setLoading(false);
+  }
 
   return (
     <ScrollView
@@ -72,7 +98,11 @@ export default function MovieScreen() {
           ) : (
             <>
               <Image
-                source={require("../assets/megan.webp")}
+                source={
+                  item?.poster_path
+                    ? { uri: image500(item?.poster_path) }
+                    : require("../assets/poster_fallback.png")
+                }
                 style={{ width, height: height * 0.55 }}
               />
               <LinearGradient
@@ -90,29 +120,29 @@ export default function MovieScreen() {
       {/* Movie Details */}
       <View style={{ marginTop: -(height * 0.09) }} className="space-y-3">
         <Text className="text-3xl font-bold text-center text-white" style={{ letterSpacing: 2 }}>
-          {movieName}
+          {movieDetails?.title}
         </Text>
         {/* Released date info */}
         <Text className="mt-5 text-base font-semibold text-center text-neutral-400">
-          Released - 2020 - 170 min
+          Released - {movieDetails?.release_date?.slice(0, 4)} - {movieDetails?.runtime} min
         </Text>
         {/* Genres */}
-        <View className="flex-row justify-center mx-4 mt-5 space-x-10">
-          <Text className="mx-2 text-base font-semibold text-center text-neutral-400">
-            Action -
-          </Text>
-          <Text className="mx-2 text-base text-center text-neutral-400">
-            Drama -
-          </Text>
-          <Text className="mx-2 text-base text-center text-neutral-400">
-            Thriller
-          </Text>
+        <View className="flex-row justify-center mx-4 mt-5 space-x-2">
+          {movieDetails.genres?.map((item, index) => (
+            <Text
+              key={item.id}
+              className="mx-2 text-base font-semibold text-center text-neutral-400"
+            >
+              {item.name}
+              {index !== movieDetails.genres.length - 1 && index < 4 && '    -   '}
+            </Text>
+          ))}
         </View>
+
         {/* Description */}
         <View className="mx-4 mt-4">
           <Text className="text-neutral-400">
-            Two years after M3GAN's rampage, her creator Gemma resorts to
-            resurrecting her infamous creation in order to take down Amelia
+            {movieDetails.overview}
           </Text>
         </View>
         {/* Cast */}
@@ -120,6 +150,6 @@ export default function MovieScreen() {
         {/* Similar Movies */}
         <MovieList title="Similar Movies" hideSeeAll={true} data={similarMovies} />
       </View>
-    </ScrollView>
+    </ScrollView >
   );
 }
